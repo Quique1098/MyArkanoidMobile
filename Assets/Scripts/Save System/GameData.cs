@@ -60,6 +60,7 @@ public class BallState
 {
     public SerializableVector3 position;
     public SerializableVector3 velocity;
+    public bool isLaunched;
 }
 
 [System.Serializable]

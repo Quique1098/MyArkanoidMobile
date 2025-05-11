@@ -17,7 +17,7 @@ public class PaddleController : MonoBehaviour, ICustomUpdateable
 
     public WinoLose winoLose;
 
-    [SerializeField] private Transform topPaddle; // asignar desde el Inspector
+    [SerializeField] public Transform topPaddle; // asignar desde el Inspector
     [SerializeField] private float topPaddleY = 8f; // altura fija
     [SerializeField] private float topPaddleZ = 0f;
     [SerializeField] private float topBoundaryX = 1f;

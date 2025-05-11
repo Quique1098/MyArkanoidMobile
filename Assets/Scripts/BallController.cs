@@ -14,8 +14,8 @@ public class BallController : MonoBehaviour, ICustomUpdateable
     //[SerializeField] private float rotationSpeed = 1f; 
     private Vector2 textureOffset = Vector2.zero;
     private Vector2 rotationSpeed = new Vector2(0.05f, 0.1f);
-    private Vector2 velocity;
-    private bool isLaunched;
+    public Vector2 velocity;
+    public bool isLaunched;
 
     private bool hasReducedLife = false;
 
@@ -142,7 +142,7 @@ public class BallController : MonoBehaviour, ICustomUpdateable
     }
 
 
-    private void ResetBallPosition()
+    public void ResetBallPosition()
     {
         // Reiniciar la posición de la bola en el paddle
         isLaunched = false;

@@ -16,7 +16,7 @@ public static class GameManager
 {
     private static bool isGamePaused = false;
 
-
+    private static GameObject _ballPrefab;
 
     // Método para pausar el juego
     public static void TogglePause()
@@ -30,6 +30,7 @@ public static class GameManager
     {
         return isGamePaused;
     }
+
 
     private static float saveInterval = 5f;
     private static float saveTimer = 0f;
@@ -48,8 +49,22 @@ public static class GameManager
         {
             score = ScoreManager.Instance.score,
             paddlePosition = new SerializableVector3(PaddleController.Instance.transform.position),
+            topPaddlePosition = new SerializableVector3(PaddleController.Instance.topPaddle.position),
+
             bricks = new List<BrickState>()
         };
+
+        // Guardar estado de las pelotas
+
+        foreach (var ball in BallController.activeBalls)
+        {
+            data.balls.Add(new BallState
+            {
+                position = new SerializableVector3(ball.transform.position),
+                velocity = new SerializableVector3(new Vector3(ball.velocity.x, ball.velocity.y, 0f)),
+                isLaunched = ball.isLaunched
+            });
+        }
 
         // Guardar estado de los bricks activos (no destruidos)
         foreach (var brick in BrickController.allBricks)
@@ -135,10 +150,41 @@ public static class GameManager
             ScoreManager.Instance.score = data.score;
             ScoreManager.Instance.UIUpdate();
 
+
+            // Limpia pelotas existentes
+            foreach (var ball in BallController.activeBalls.ToList())
+            {
+                UnityEngine.Object.Destroy(ball.gameObject);
+            }
+            BallController.activeBalls.Clear();
+
+            // Instanciar bolas guardadas
+            foreach (var ballState in data.balls)
+            {
+                GameObject prefab = GetBallPrefab();
+                if (prefab == null) continue;
+
+                GameObject newBall = UnityEngine.Object.Instantiate(prefab, ballState.position.ToVector3(), Quaternion.identity);
+                BallController ballController = newBall.GetComponent<BallController>();
+
+                ballController.velocity = new Vector2(ballState.velocity.x, ballState.velocity.y);
+                ballController.isLaunched = ballState.isLaunched;
+
+                if (!ballState.isLaunched)
+                {
+                    ballController.ResetBallPosition();
+                }
+            }
+
+
+
             // Restaurar posición de la paleta
             if (PaddleController.Instance != null)
             {
                 PaddleController.Instance.transform.position = data.paddlePosition.ToVector3();
+                PaddleController.Instance.topPaddle.position = data.topPaddlePosition.ToVector3();
+
+
             }
 
             // Restaurar estado de los ladrillos
@@ -195,5 +241,16 @@ public static class GameManager
 
 
 
-
+    private static GameObject GetBallPrefab()
+    {
+        if (_ballPrefab == null)
+        {
+            _ballPrefab = Resources.Load<GameObject>("Prefabs/Ball");
+            if (_ballPrefab == null)
+            {
+                Debug.LogError("[GameManager] No se encontró el prefab de la pelota en Resources/Prefabs/Ball");
+            }
+        }
+        return _ballPrefab;
+    }
 }
