@@ -109,6 +109,7 @@ public class BrickController : MonoBehaviour, ICustomUpdateable
         // Revisar victoria
         if (activeBricks.Count == 0)
         {
+            GameManager.SaveGame();
             WinoLose.TriggerWin();
         }
 

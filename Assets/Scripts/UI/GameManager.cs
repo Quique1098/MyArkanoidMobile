@@ -54,7 +54,7 @@ public static class GameManager
             });
         }
 
-        // Guardar estado de los bricks activos (no destruidos)
+        // Guardar estado de los bricks
         foreach (var brick in BrickController.allBricks)
         {
             data.bricks.Add(new BrickState
@@ -64,22 +64,6 @@ public static class GameManager
                 health = brick.health,
                 position = new SerializableVector3(brick.transform.position)
             });
-        }
-
-        // Guardar bricks destruidos previamente (usando PlayerPrefs para ejemplo rápido)
-        string destroyed = PlayerPrefs.GetString("DestroyedBricks", "");
-        var destroyedIds = destroyed.Split(';');
-
-        foreach (var id in destroyedIds)
-        {
-            if (!string.IsNullOrEmpty(id) && !data.bricks.Exists(b => b.id == id))
-            {
-                data.bricks.Add(new BrickState
-                {
-                    id = id,
-                    isDestroyed = true
-                });
-            }
         }
 
         Debug.Log("Intentando salvar datos...");
@@ -105,13 +89,13 @@ public static class GameManager
         try
         {
 
-            GameObject bricksParent = GameObject.Find("BricksParent"); // Asumiendo que tus bricks están agrupados bajo un objeto padre
+            GameObject bricksParent = GameObject.Find("BricksParent");
             if (bricksParent != null)
                 bricksParent.SetActive(false);
 
             GameData data = null;
 
-            // Primero intentamos cargar desde la nube
+            // Primero  cargar desde la nube
             string encryptedJson = await CloudSaveSystem.LoadRawAsync();
 
             if (!string.IsNullOrEmpty(encryptedJson))
