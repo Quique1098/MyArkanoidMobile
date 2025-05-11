@@ -6,12 +6,6 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
-public enum SaveMethod
-{
-    Local,
-    Cloud
-}
-
 public static class GameManager
 {
     private static bool isGamePaused = false;
@@ -30,12 +24,6 @@ public static class GameManager
     {
         return isGamePaused;
     }
-
-
-    private static float saveInterval = 5f;
-    private static float saveTimer = 0f;
-
-    public static SaveMethod currentSaveMethod = SaveMethod.Local;
 
     public static void SaveGame()
     {
@@ -97,7 +85,7 @@ public static class GameManager
         Debug.Log("Intentando salvar datos...");
 
         // Guardado local encriptado
-        // EncryptedJSONSaveSystem.Save(data);
+        EncryptedJSONSaveSystem.Save(data);
 
         // Guardado en la nube
         _ = SaveGameToCloudAsync(data);

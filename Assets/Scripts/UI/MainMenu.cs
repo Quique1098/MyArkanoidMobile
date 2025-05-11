@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Threading.Tasks;
+using Unity.Services.Core;
+using Unity.Services.Authentication;
 
 public class MainMenu : MonoBehaviour
 {
@@ -19,10 +21,31 @@ public class MainMenu : MonoBehaviour
 
     private async void Start()
     {
-        CheckSaveDataAvailability();
-
+        await InitializeCloudServices();
+        await CheckSaveDataAvailability();
     }
 
+
+    private async Task InitializeCloudServices()
+    {
+        try
+        {
+            if (!UnityServices.State.Equals(ServicesInitializationState.Initialized))
+            {
+                await UnityServices.InitializeAsync();
+            }
+
+            if (!AuthenticationService.Instance.IsSignedIn)
+            {
+                await AuthenticationService.Instance.SignInAnonymouslyAsync();
+                Debug.Log($"[CloudSave] Signed in. PlayerID: {AuthenticationService.Instance.PlayerId}");
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"[CloudSave] Initialization failed: {e.Message}");
+        }
+    }
 
 
 
@@ -70,20 +93,14 @@ public class MainMenu : MonoBehaviour
         // Borrar en la nube
         await CloudSaveSystem.DeleteAsync();
 
-        CheckSaveDataAvailability();
+        _ = CheckSaveDataAvailability();
 
 
     }
 
 
-    private async void CheckSaveDataAvailability()
+    private async Task CheckSaveDataAvailability()
     {
-        // Esperar hasta que esté inicializado
-        while (!CloudSaveInitializer.IsSignedIn)
-        {
-            await Task.Yield();
-        }
-
         bool hasLocal = EncryptedJSONSaveSystem.HasSaveData();
         bool hasCloud = await CloudSaveSystem.HasCloudSaveAsync();
 
@@ -97,6 +114,7 @@ public class MainMenu : MonoBehaviour
 
         Debug.Log($"[MainMenu] Save availability — Local: {hasLocal}, Cloud: {hasCloud}, Any: {hasAnySave}");
     }
+
 
 
 
