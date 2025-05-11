@@ -50,7 +50,7 @@ public class BrickController : MonoBehaviour, ICustomUpdateable
     {
         
             activeBricks.Remove(this);
-        
+
     }
 
     public void CustomStart()

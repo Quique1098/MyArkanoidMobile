@@ -169,8 +169,9 @@ public static class GameManager
                     Debug.Log($"[LoadGame] Procesando Brick ID: {brick.id} | isDestroyed: {brickState.isDestroyed} | Health: {brickState.health}");
 
 
-                    if (brickState.isDestroyed)
+                    if (brickState.isDestroyed || brickState.health == 0)
                     {
+
                         brick.gameObject.SetActive(false);
                         Debug.Log($"[LoadGame] Desactivando brick {brick.id}");
 
@@ -190,6 +191,7 @@ public static class GameManager
 
                     }
 
+
                 }
                 else
                 {
@@ -199,8 +201,12 @@ public static class GameManager
 
             if (bricksParent != null)
                 bricksParent.SetActive(true);
-
-
+            // Verificar condición de victoria después de cargar
+            if (BrickController.activeBricks.All(b => !b.gameObject.activeSelf))
+            {
+                Debug.Log("[LoadGame] No quedan bricks activos, Partida Ganada.");
+                WinoLose.TriggerWin();
+            }
             Debug.Log("[LoadGame] Carga de datos completada.");
         }
         catch (System.Exception e)
