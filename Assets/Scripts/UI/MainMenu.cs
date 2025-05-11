@@ -4,6 +4,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Threading.Tasks;
 
 public class MainMenu : MonoBehaviour
 {
@@ -16,15 +17,13 @@ public class MainMenu : MonoBehaviour
     public Button continueButton;
     public Button deleteDataButton;
 
-    void Start()
+    private async void Start()
     {
-        // Desactiva el botón Continue si no hay guardado
-        if (continueButton != null)
-            continueButton.interactable = EncryptedJSONSaveSystem.HasSaveData();
+        CheckSaveDataAvailability();
 
-        if (deleteDataButton != null)
-            deleteDataButton.interactable = EncryptedJSONSaveSystem.HasSaveData();
     }
+
+
 
 
     public void PlayNewGame()
@@ -63,17 +62,42 @@ public class MainMenu : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoadedLoadGame; // Desuscribirse para no duplicar
     }
 
-    public void DeleteSaveData()
+    public async void DeleteSaveData()
     {
+        // Borrar local
         EncryptedJSONSaveSystem.DeleteSaveData();
 
-        // Actualizar el estado del botón Continue
+        // Borrar en la nube
+        await CloudSaveSystem.DeleteAsync();
+
+        CheckSaveDataAvailability();
+
+
+    }
+
+
+    private async void CheckSaveDataAvailability()
+    {
+        // Esperar hasta que esté inicializado
+        while (!CloudSaveInitializer.IsSignedIn)
+        {
+            await Task.Yield();
+        }
+
+        bool hasLocal = EncryptedJSONSaveSystem.HasSaveData();
+        bool hasCloud = await CloudSaveSystem.HasCloudSaveAsync();
+
+        bool hasAnySave = hasLocal || hasCloud;
+
         if (continueButton != null)
-            continueButton.interactable = false;
+            continueButton.interactable = hasAnySave;
 
         if (deleteDataButton != null)
-            deleteDataButton.interactable = false;
+            deleteDataButton.interactable = hasAnySave;
+
+        Debug.Log($"[MainMenu] Save availability — Local: {hasLocal}, Cloud: {hasCloud}, Any: {hasAnySave}");
     }
+
 
 
     public void QuitGame()

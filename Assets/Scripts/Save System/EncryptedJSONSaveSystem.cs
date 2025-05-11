@@ -126,6 +126,16 @@ public static class EncryptedJSONSaveSystem
     }
 
 
+    public static string EncryptRaw(string json)
+    {
+        byte[] encrypted = Encrypt(json, key);
+        return Convert.ToBase64String(encrypted);
+    }
 
+    public static string DecryptRaw(string base64)
+    {
+        byte[] encrypted = Convert.FromBase64String(base64);
+        return Decrypt(encrypted, key);
+    }
 }
 

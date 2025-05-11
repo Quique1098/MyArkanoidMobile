@@ -22,7 +22,7 @@ public class ScoreManager : MonoBehaviour
 
     private void Start()
     {
-        scoreText.text = "Score: " + score.ToString();
+        UIUpdate();
 
     }
 
@@ -30,8 +30,11 @@ public class ScoreManager : MonoBehaviour
     public void AddScore(int points)
     {
         score += points;
+        UIUpdate();
+    }
 
-        // Actualizar el texto si existe
+    public void UIUpdate()
+    {
         if (scoreText != null)
         {
             scoreText.text = "Score: " + score.ToString();

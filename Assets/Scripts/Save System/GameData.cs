@@ -49,8 +49,10 @@ public struct SerializableVector3
 [System.Serializable]
 public class BrickState
 {
-    public string id; // ID del brick
+    public string id; // ID único del brick
     public bool isDestroyed;
+    public int health; // Vida actual del ladrillo
+    public SerializableVector3 position; // Posición actual
 }
 
 [System.Serializable]

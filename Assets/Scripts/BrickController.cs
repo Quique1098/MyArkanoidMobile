@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,6 +17,9 @@ public class BrickController : MonoBehaviour, ICustomUpdateable
 
     //Lista de ladrillos que se mantiene actualizada para comprobar colision
     public static List<BrickController> activeBricks = new List<BrickController>();
+    public static List<BrickController> allBricks = new List<BrickController>();
+
+    public string id => $"{transform.position.x}_{transform.position.y}_{transform.position.z}";
 
 
     private void Start()
@@ -36,12 +40,11 @@ public class BrickController : MonoBehaviour, ICustomUpdateable
 
     private void OnEnable()
     {
-        //Se agrega a la lista de ladrillos disponibles
-        
-            activeBricks.Add(this);
-
-        
+        activeBricks.Add(this);
+        if (!allBricks.Contains(this))
+            allBricks.Add(this);
     }
+
 
     private void OnDisable()
     {
@@ -94,24 +97,24 @@ public class BrickController : MonoBehaviour, ICustomUpdateable
         CustomUpdateManager.Instance.RemoveObject(this);
         activeBricks.Remove(this);
 
-        // Sumar puntos al gestor
-        ScoreManager.Instance.AddScore(10); // Ajusta el valor según los puntos que quieras por ladrillo
+        // Sumar puntos
+        ScoreManager.Instance.AddScore(10);
 
-        // Instanciar power-up
+        // Instanciar power-up si corresponde
         if (isPowerUpEnabled && powerUpPrefab != null)
         {
             Instantiate(powerUpPrefab, transform.position, Quaternion.identity);
         }
 
-        // Mostrar mensaje de victoria si todos los ladrillos se destruyen
+        // Revisar victoria
         if (activeBricks.Count == 0)
         {
             WinoLose.TriggerWin();
         }
 
-        // Destruir el ladrillo
-        Destroy(gameObject, 0.1f);
+        gameObject.SetActive(false);
     }
+
 
 }
 
