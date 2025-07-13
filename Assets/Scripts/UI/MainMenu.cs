@@ -51,6 +51,8 @@ public class MainMenu : MonoBehaviour
 
     public void PlayNewGame()
     {
+        AnalyticsManager.Instance.EnviarEventoPlay();
+
         SceneManager.LoadScene(sceneName);
         //StartCoroutine(PlayScene(withLoad: false));
     }
