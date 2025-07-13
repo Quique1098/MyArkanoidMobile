@@ -184,6 +184,7 @@ public class BallController : MonoBehaviour, ICustomUpdateable
             {
                 hasReducedLife = true;
                 ResetBallPosition();
+                ScoreManager.Instance.AddScore(-20);
                 PaddleController.Instance?.ReduceLives();
 
                 //Reiniciamos flag y ponemos un frame de retraso para evitar que se reste mas de una vida por frame
@@ -207,6 +208,7 @@ public class BallController : MonoBehaviour, ICustomUpdateable
             {
                 hasReducedLife = true;
                 ResetBallPosition();
+                ScoreManager.Instance.AddScore(-20);
                 PaddleController.Instance?.ReduceLives();
 
                 //Reiniciamos flag y ponemos un frame de retraso para evitar que se reste mas de una vida por frame

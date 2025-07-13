@@ -9,6 +9,7 @@ public class WinoLose : MonoBehaviour
 {
 
     public static event Action OnWinEvent;
+    public AdsManager adsManager;
 
     private void OnEnable()
     {
@@ -30,10 +31,13 @@ public class WinoLose : MonoBehaviour
     }
 
     public void Lose(){
+
         SceneManager.LoadScene("LoseMenu");
     }
 
     public void Main(){
+        adsManager.ShowRewarded();
+
         SceneManager.LoadScene("MainMenu");
     }
 
