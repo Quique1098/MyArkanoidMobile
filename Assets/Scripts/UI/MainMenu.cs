@@ -53,7 +53,7 @@ public class MainMenu : MonoBehaviour
     {
         AnalyticsManager.Instance.EnviarEventoPlay();
 
-        SceneManager.LoadScene(sceneName);
+        SceneManager.LoadScene("SampleScene");
         //StartCoroutine(PlayScene(withLoad: false));
     }
 
@@ -98,6 +98,7 @@ public class MainMenu : MonoBehaviour
 
         _ = CheckSaveDataAvailability();
 
+        AnalyticsManager.Instance.EnviarEventoBorrarData();
 
     }
 

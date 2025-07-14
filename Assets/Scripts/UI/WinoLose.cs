@@ -51,7 +51,6 @@ public class WinoLose : MonoBehaviour
 
         var evento = new CustomEvent("PlayerWon")
         {
-            { "player_id", playerId },
             { "score", finalScore }
         };
 

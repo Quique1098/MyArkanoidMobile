@@ -54,5 +54,14 @@ public class AnalyticsManager : MonoBehaviour
     }
 
 
+    public void EnviarEventoBorrarData()
+    {
+        AnalyticsService.Instance.RecordEvent("DeletedData");
+        AnalyticsService.Instance.Flush();
+
+        Debug.Log("Evento DeletedData enviado.");
+
+    }
+
 }
 
